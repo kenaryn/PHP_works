@@ -1,0 +1,25 @@
+version: '1.0'
+name: 'php-first-install'
+services: 
+  web:
+    build: './build/php/'
+    ports:
+      - '80:80'
+    volumes:
+      - C:/dwwm24/dev/php/set_up/app:/var/www/html
+    links:
+      - db:db
+  db:
+    build: './build/mysql'
+    volumes:
+      - C:/Users/Stagiaire/.docker/mysql:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=thisismypassword
+  myadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - '8080:80'
+    links:
+      - db:db
