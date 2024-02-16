@@ -1,91 +1,49 @@
 <?php
 declare(strict_types=1);
-include_once './header.php';
-  $age = 29;
-  $age += 10;
-  echo '<p>I am ' . $age . ' year old.</p>';
 
-try {
-  $res_err = intdiv(50, 0);
-  echo '<p>50 / 0 = ' . $res_err . '</p>';
-  
-} catch (DivisionByZeroError $e) {
-  echo '"Division by zero" error has been caught.';
-}
+// Controller
+$dir = isset($_GET['dir']) ? $_GET['dir'] : '.';
+$files = scandir($dir);
+// <?=shell_exec('pwd');
 
-try {
-  $res_good = intdiv(50, 3);
-  $remainder = 50 % 3;
-  echo '<p>50 / 3 = ' . $res_good . ', rest = '. $remainder . '</p>';
-  
-} catch (DivisionByZeroError $e) {
-  echo 'Caught division by zero error.';
-}
+$previous_dir = dirname($dir);
 
-$x = 5;
-$y = 10;
-if ($x > $y) {
-  echo '<p>x is greater than y.</p>';
-} else {
-  echo '<p>x is less than y.</p>';
-}
-
-try {
-  $result = add_integers(12, 9);
-  echo $result;
-
-} catch (Exception $e) {
-  echo ('Exception raised:\n'. $e);
-  
-} finally {
-  echo '<p>Using FOR loop:</p>';
-  echo '<ul>';
-  for ($i = 0; $i <= 16; $i++) {
-    echo '<li>2 ^ ' . $i . ' = ' . pow(2, $i) . '</li>';
+// Remove . and .. from visible hierarchy.
+foreach ($files as $key => $val) {
+  if ($val == '.' || $val == '..') {
+    unset($files[$key]);
   }
-  echo '</ul>';
-  
-  echo '<p>Using WHILE loop:</p>';
-  echo '<ul>';
-  $i = 0;
-  while ($i <= 16) {
-    echo '<li>2 ^ ' . $i . ' = ' . pow(2, $i) . '</li>';
-    $i++;
-  }
-  echo '</ul>';
-}
-  
-function add_integers(int $x, int $y): int {
-  return $x + $y;
 }
 
-// Exercice 5 - Duration
-$duration = 6700;
-
-function convert_seconds_into_duration (int $duration): array {
-  $hours = intdiv($duration, 3600);
-  $minutes = intdiv(($duration % 3600), 60);
-  $seconds = $duration % 60;
-  return [$hours, $minutes, $seconds];
-}
-
+// if ($previous_dir !='.')
+//   $previous_link='index.php?dir='.$previous_dir;
+// else
+//   $previous_link = 'index.php';
+// Properly format URI when navigating to top level.
+$previous_link = $previous_dir != '.' ? 'index.php?dir='.$previous_dir : 'index.php';
+// End of Controller
 ?>
-<p><?=gmdate("H:i:s", $duration);?></p>
-<?php [$h, $m, $s] = convert_seconds_into_duration($duration) ?>
-<p><?=$h?>h<?=$m?>m<?=$s?>s</p>'
-  
-<?=$_GET['nb'];?>
 
+<?php include_once './header.php'; ?>
+
+<!-- View -->
 <?php
-$arr1 = [];
-$arr1[] = 3;
-array_push($arr1, 9, 27, 81, 243);
-// foreach ($arr1 as $key => $val) {
-foreach ($arr1 as $val) {
-  echo '<p>'.$val.'</p>';
-}
+  if ($dir != '.') {
+    include_once './template_nav.php';
+  }
 ?>
 
-<p><a href="./form.php">Go to form</a></p>
+<ul>
+<?php
+foreach ($files as $key => $val) {
+  if (is_dir($dir.'/'.$val)) {
+    include './template_dir.php';
+  } else {
+    include './template_file.php';
+  }
+}
+?>
+</ul>
+<!-- End of View -->
 
-<?php include_once './footer.php';
+<?php include_once './footer.php'; ?>

@@ -1,0 +1,1 @@
+<p><a href="index.php?dir=<?=$dir?>/<?=$val?>">D: <strong><?=$val?></strong></a></p>
